@@ -1,13 +1,15 @@
 .text-updater-node {
-    height: 50px;
+    height: 24px;
+    width: 138px;
     border: 1px solid #eee;
     padding: 5px;
     border-radius: 5px;
+    border: 1px solid black;
     background: white;
+    align-content: center;
   }
   
   .text-updater-node label {
     display: block;
-    color: #777;
     font-size: 12px;
   }
