@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ReactFlow from "react-flow-renderer";
+import ReactFlow, { Background } from "react-flow-renderer";
 
 import LabelRole from "./LabelRole";
 
@@ -21,7 +21,11 @@ function Flow() {
   const [nodes] = useState(initialNodes);
   const [edges] = useState(initialEdges);
 
-  return <ReactFlow nodes={nodes} edges={edges} fitView />;
+  return (
+    <ReactFlow nodes={nodes} edges={edges} fitView >
+      <Background variant="dots" gap={12} />
+    </ReactFlow>
+  );
 }
 
 export default Flow;
