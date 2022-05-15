@@ -1,29 +1,73 @@
-import { useState } from "react";
-import ReactFlow, { Background } from "react-flow-renderer";
+import { useCallback, useState } from 'react';
+import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Background } from 'react-flow-renderer';
 
-import LabelRole from "./LabelRole";
+import TextUpdaterNode from './TextUpdaterNode.js';
+
+import './text-updater-node.css';
 
 const initialNodes = [
-  { id: "1", type: "input", data: { label: "Input Node" }, position: { x: 250, y: 25 } },
-  /* you can also pass a React component as a label */
-  { id: "2", data: { label: <LabelRole /> }, position: { x: 100, y: 125 }},
-  { id: "3", data: { label: "Output Node" }, position: { x: 250, y: 250 }},
-  { id: "4", data: { label: "Node 4" }, position: { x: 350, y: 350 }}
-];
+  { id: 'node-1', type: 'textUpdater', position: { x: 0, y: 0 }, data: { value: 123 } },
+  {
+    id: 'node-2',
+    type: 'output',
+    targetPosition: 'top',
+    position: { x: 0, y: 200 },
+    data: { label: 'node 2' },
+  },
+  {
+    id: 'node-3',
+    type: 'output',
+    targetPosition: 'top',
+    position: { x: 400, y: 200 },
+    data: { label: 'node 3' },
+  },
+  {
+    id: 'node-4',
+    type: 'output',
+    targetPosition: 'top',
+    position: { x: 200, y: 200 },
+    data: { label: 'node 4' },
+  },
+];  
 
 const initialEdges = [
-  { id: "e1-2", source: "1", target: "2", animated: true },
-  { id: "e2-3", source: "2", target: "3", animated: true },
-  { id: "e3-4", source: "3", target: "4", animated: true }
+  { id: 'edge-1', source: 'node-1', target: 'node-2', sourceHandle: 'a' },
+  { id: 'edge-2', source: 'node-1', target: 'node-3', sourceHandle: 'b' },
+  { id: 'edge-3', source: 'node-1', target: 'node-4', sourceHandle: 'c' },
 ];
 
+// we define the nodeTypes outside of the component to prevent re-renderings
+// you could also use useMemo inside the component
+const nodeTypes = { textUpdater: TextUpdaterNode };
+
 function Flow() {
-  const [nodes] = useState(initialNodes);
-  const [edges] = useState(initialEdges);
+  const [nodes, setNodes] = useState(initialNodes);
+  const [edges, setEdges] = useState(initialEdges);
+
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    [setNodes]
+  );
+  const onEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    [setEdges]
+  );
+  const onConnect = useCallback(
+    (connection) => setEdges((eds) => addEdge(connection, eds)),
+    [setEdges]
+  );
 
   return (
-    <ReactFlow nodes={nodes} edges={edges} fitView >
-      <Background variant="dots" gap={12} />
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      nodeTypes={nodeTypes}
+      fitView
+    >
+      <Background gap={12} />
     </ReactFlow>
   );
 }
